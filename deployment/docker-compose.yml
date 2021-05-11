@@ -1,0 +1,69 @@
+version : "3"
+
+services:
+    discovery-server:
+        container_name: discovery-server
+        image: agarwalsur98/spring-discovery-server
+        ports:
+                - "8761:8761"
+        volumes:
+                - /tmp:/workspace/logs
+    
+    service-catalog-app:
+        container_name: service-catalog
+        image: agarwalsur98/spring-catalog-docker
+        ports:
+                - "8081:8081"
+        links:
+            - discovery-server:discovery-server
+        environment:
+                - discovery_server_url=http://discovery-server:8761/eureka
+        volumes:
+                - /tmp:/workspace/logs
+    login-app:
+        container_name: products-service
+        image: agarwalsur98/spring-login-docker
+        ports:
+                - "8080:8080"
+        links:
+            - discovery-server:discovery-server
+        environment:
+                - discovery_server_url=http://discovery-server:8761/eureka
+        volumes:
+                - /tmp:/workspace/logs
+  
+    Order-app:
+        container_name: order-app
+        image: agarwalsur98/spring-order-docker
+        ports:
+                - "8082:8082"
+        links:
+            - discovery-server:discovery-server
+        environment:
+                - discovery_server_url=http://discovery-server:8761/eureka
+        volumes:
+                - /tmp:/workspace/logs
+
+    admin-app:
+        container_name: admin-service
+        image: agarwalsur98/spring-admin-docker
+        ports:
+                - "8083:8083"
+        links:
+            - discovery-server:discovery-server
+        environment:
+                - discovery_server_url=http://discovery-server:8761/eureka
+        volumes:
+                - /tmp:/workspace/logs
+
+    service-provider-app:
+        container_name: service-provider-app
+        image: agarwalsur98/spring-service-provider-docker
+        ports:
+                - "8084:8084"
+        links:
+            - discovery-server:discovery-server
+        environment:
+                - discovery_server_url=http://discovery-server:8761/eureka
+        volumes:
+                - /tmp:/workspace/logs
